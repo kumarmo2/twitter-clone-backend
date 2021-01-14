@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TwitterWeb.Business.Users;
-using TwitterWeb.Dtos.Users;
-using userModels = TwitterWeb.Models.Users;
-using userDtos = TwitterWeb.Dtos.Users;
-using TwitterWeb.Utils.Common;
-using TwitterWeb.Utils.Users;
+using Business.Users;
+using Dtos.Users;
+using userModels = Models.Users;
+using userDtos = Dtos.Users;
+using Utils.Common;
+using Utils.Users;
 using Microsoft.AspNetCore.Http;
 using TwitterWeb.Filters;
 

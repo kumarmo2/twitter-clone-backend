@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using TwitterWeb.Dtos;
-using TwitterWeb.Dtos.Users;
+using Dtos;
+using Dtos.Users;
 using userModels = Models.Users;
 
-namespace TwitterWeb.Business.Users
+namespace Business.Users
 {
     public interface IUsersLogic
     {

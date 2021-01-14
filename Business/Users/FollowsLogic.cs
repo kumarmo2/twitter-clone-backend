@@ -4,7 +4,7 @@ using System;
 using DataAccess.Users;
 using Models.Users;
 using Models.Tweets;
-using TwitterWeb.Utils;
+using Utils;
 
 namespace Business.Users
 {

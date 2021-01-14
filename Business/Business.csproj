@@ -4,6 +4,11 @@
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Dtos\Dtos.csproj" />
+    <ProjectReference Include="..\Utils\Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TwitterWeb.Business.Users;
+using Business.Users;
 using DataAccess;
-using TwitterWeb.DataAccess.Users;
+using DataAccess.Users;
 using TwitterWeb.Filters;
-using TwitterWeb.Utils;
-using TwitterWeb.Utils.Users;
+using Utils;
+using Utils.Users;
 
 namespace TwitterWeb
 {
