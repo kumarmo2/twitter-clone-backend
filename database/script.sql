@@ -1,9 +1,7 @@
 ---------------- Schemas start-----------------------
 
-
 create schema if not exists users;
-
-
+create schema if not exists events;
 
 ---------------- Schemas ends---------------------
 
@@ -41,6 +39,19 @@ create schema if not exists users;
 
  alter table users.follows
 add constraint ix_follows_followerid_followeeid unique(followerid, followeeid);
+
+create table if not exists events.userqueues
+(
+	id bigint not null,
+	userid bigint not null,
+	queuename varchar(50) not null,
+	constraint pk_userqueues_id primary key(id)
+);
+
+
+alter table events.userqueues
+ add constraint fk_userqueues_users foreign key(userid) references users.users(id),
+ add constraint ix_userqueues_userid_queuename unique(userid, queuename);
 
     ------------------------ Tables End -------------------------
 

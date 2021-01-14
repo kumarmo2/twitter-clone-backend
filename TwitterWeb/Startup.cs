@@ -9,6 +9,8 @@ using DataAccess.Users;
 using TwitterWeb.Filters;
 using Utils;
 using Utils.Users;
+using Business.Events;
+using DataAccess.Events;
 
 namespace TwitterWeb
 {
@@ -40,6 +42,8 @@ namespace TwitterWeb
             services.AddSingleton<IUserUtils, UserUtils>();
             services.AddSingleton<IFollowRepository, FollowRepository>();
             services.AddSingleton<IFollowsLogic, FollowsLogic>();
+            services.AddSingleton<IEventsLogic, EventsLogic>();
+            services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Authorization>();
