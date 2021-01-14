@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using TwitterWeb.Models.Tweets;
 using Dapper;
 using TwitterWeb.Models.Users;
+using DataAccess;
 
 namespace TwitterWeb.DataAccess.Users
 {

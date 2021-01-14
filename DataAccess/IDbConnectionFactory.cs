@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace TwitterWeb.DataAccess
+namespace DataAccess
 {
     public interface IDbConnectionFactory
     {
