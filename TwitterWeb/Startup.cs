@@ -11,6 +11,7 @@ using Utils;
 using Utils.Users;
 using Business.Events;
 using DataAccess.Events;
+using Utils.Common;
 
 namespace TwitterWeb
 {
@@ -34,8 +35,6 @@ namespace TwitterWeb
                 options.UseCamelCasing(false);
             });
 
-
-
             services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IUsersLogic, UsersLogic>();
@@ -44,6 +43,7 @@ namespace TwitterWeb
             services.AddSingleton<IFollowsLogic, FollowsLogic>();
             services.AddSingleton<IEventsLogic, EventsLogic>();
             services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
+            services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Authorization>();

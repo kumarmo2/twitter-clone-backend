@@ -4,6 +4,7 @@ using DataAccess.Events;
 using Dtos;
 using Models.Events;
 using Utils;
+using Utils.Common;
 
 namespace Business.Events
 {
@@ -11,10 +12,13 @@ namespace Business.Events
     {
         private readonly IIdentityFactory _identityFactory;
         private readonly IUserQueueRepository _userQueueRepository;
-        public EventsLogic(IIdentityFactory identityFactory, IUserQueueRepository userQueueRepository)
+        private readonly IRabbitMqClient _rabbitMqClient;
+        public EventsLogic(IIdentityFactory identityFactory, IUserQueueRepository userQueueRepository,
+            IRabbitMqClient rabbitMqClient)
         {
             _identityFactory = identityFactory;
             _userQueueRepository = userQueueRepository;
+            _rabbitMqClient = rabbitMqClient;
         }
         public async Task<Result<UserQueue>> RegisterUserEvent(long userId)
         {
@@ -33,6 +37,8 @@ namespace Business.Events
             };
 
             await _userQueueRepository.Create(userQueue);
+            // TODO: need to think about the logic to kill this queue.
+            _rabbitMqClient.DeclareQueue(userQueue.QueueName);
 
             result.SuccessResult = userQueue;
             return result;
