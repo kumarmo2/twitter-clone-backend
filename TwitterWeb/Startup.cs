@@ -12,6 +12,7 @@ using Utils.Users;
 using Business.Events;
 using DataAccess.Events;
 using Utils.Common;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace TwitterWeb
 {
@@ -61,6 +62,11 @@ namespace TwitterWeb
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             }
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
             app.UseStaticFiles();
 
             app.UseRouting();
