@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TwitterWeb.Business.Users;
+using Business.Users;
 using DataAccess;
-using TwitterWeb.DataAccess.Users;
+using DataAccess.Users;
 using TwitterWeb.Filters;
-using TwitterWeb.Utils;
-using TwitterWeb.Utils.Users;
+using Utils;
+using Utils.Users;
+using Business.Events;
+using DataAccess.Events;
+using Utils.Common;
 
 namespace TwitterWeb
 {
@@ -32,14 +35,15 @@ namespace TwitterWeb
                 options.UseCamelCasing(false);
             });
 
-
-
             services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IUsersLogic, UsersLogic>();
             services.AddSingleton<IUserUtils, UserUtils>();
             services.AddSingleton<IFollowRepository, FollowRepository>();
             services.AddSingleton<IFollowsLogic, FollowsLogic>();
+            services.AddSingleton<IEventsLogic, EventsLogic>();
+            services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
+            services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Authorization>();
