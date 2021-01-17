@@ -1,19 +1,18 @@
+using Business.Events;
+using DataAccess;
+using DataAccess.Events;
+using Dtos.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Business.Users;
-using DataAccess;
-using DataAccess.Users;
 using Utils;
-using Utils.Users;
-using Business.Events;
-using DataAccess.Events;
 using Utils.Common;
-using Microsoft.AspNetCore.HttpOverrides;
+using Utils.Users;
 
-namespace TwitterWeb
+namespace EventsWeb
 {
     public class Startup
     {
@@ -27,26 +26,23 @@ namespace TwitterWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-            .AddControllersWithViews()
-            // To Add NewtonSoft in dotnet 3.0 and above, you need to add package Microsoft.AspNetCore.Mvc.NewtonsoftJson
-            .AddNewtonsoftJson(options =>
-            {
-                options.UseCamelCasing(false);
-            });
+            services.AddControllers();
 
-            services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
-            services.AddSingleton<IUserRepository, UserRepository>();
-            services.AddSingleton<IUsersLogic, UsersLogic>();
+
+
+            // services.Configure<EventOptions>("Events", Configuration);
+
+            services.Configure<EventOptions>(Configuration.GetSection(EventOptions.Key));
+
+
             services.AddSingleton<IUserUtils, UserUtils>();
-            services.AddSingleton<IFollowRepository, FollowRepository>();
-            services.AddSingleton<IFollowsLogic, FollowsLogic>();
+            services.AddSingleton<Authorization>();
             services.AddSingleton<IEventsLogic, EventsLogic>();
+            services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
+            services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
             services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
 
-            services.AddSingleton<IIdentityFactory, IdentityFactory>();
-            services.AddSingleton<Authorization>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,25 +52,17 @@ namespace TwitterWeb
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-            app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
         }
     }

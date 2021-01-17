@@ -19,8 +19,10 @@ namespace Utils.Common
             using (var channel = _connection.CreateModel())
             {
                 // TODO: we should make an Connection/Object Pool of channels instead of always creating new ones.
-                channel.QueueDeclare(queue: queueName, durable: false);
+                channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false);
             }
         }
+
+        public IModel GetChannel() => _connection.CreateModel();
     }
 }

@@ -1,10 +1,8 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.Events;
 using Dtos.Users;
 using Microsoft.AspNetCore.Mvc;
-using TwitterWeb.Filters;
 using Utils.Common;
 
 namespace TwitterWeb.Controllers.Events

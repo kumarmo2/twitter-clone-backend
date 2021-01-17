@@ -1,7 +1,10 @@
+using RabbitMQ.Client;
+
 namespace Utils.Common
 {
     public interface IRabbitMqClient
     {
-        public void DeclareQueue(string queueName);
+        void DeclareQueue(string queueName);
+        IModel GetChannel();
     }
 }
