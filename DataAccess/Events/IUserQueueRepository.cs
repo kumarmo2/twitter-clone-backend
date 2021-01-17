@@ -6,5 +6,7 @@ namespace DataAccess.Events
     public interface IUserQueueRepository
     {
         Task Create(UserQueue userQueue);
+
+        Task<UserQueue> Get(long userId, string queueName);
     }
 }

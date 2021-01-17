@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Business.Users;
 using DataAccess;
 using DataAccess.Users;
-using TwitterWeb.Filters;
 using Utils;
 using Utils.Users;
 using Business.Events;

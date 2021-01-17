@@ -19,5 +19,15 @@ namespace DataAccess.Events
                 await con.ExecuteAsync(query, new { id = userQueue.Id, userid = userQueue.UserId, queuename = userQueue.QueueName });
             }
         }
+
+        public async Task<UserQueue> Get(long userId, string queueName)
+        {
+            var query = "select * from events.userqueues where userid = @userid and queuename = @queuename limit 1";
+            using (var con = _dbConnectionFactory.GetDbConnection())
+            {
+                return await con.QueryFirstOrDefaultAsync<UserQueue>(query, new { userid = userId, queuename = queueName });
+            }
+
+        }
     }
 }

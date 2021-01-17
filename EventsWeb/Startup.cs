@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Business.Events;
+using DataAccess;
+using DataAccess.Events;
+using Dtos.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Utils;
+using Utils.Common;
+using Utils.Users;
 
 namespace EventsWeb
 {
@@ -26,6 +27,22 @@ namespace EventsWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+
+
+            // services.Configure<EventOptions>("Events", Configuration);
+
+            services.Configure<EventOptions>(Configuration.GetSection(EventOptions.Key));
+
+
+            services.AddSingleton<IUserUtils, UserUtils>();
+            services.AddSingleton<Authorization>();
+            services.AddSingleton<IEventsLogic, EventsLogic>();
+            services.AddSingleton<IIdentityFactory, IdentityFactory>();
+            services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
+            services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
+            services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,11 +53,12 @@ namespace EventsWeb
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Business.Users;
 using Dtos.Users;
-using TwitterWeb.Filters;
 using Utils.Common;
 
 namespace TwitterWeb.Controllers.Users

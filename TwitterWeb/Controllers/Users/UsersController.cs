@@ -7,7 +7,6 @@ using userDtos = Dtos.Users;
 using Utils.Common;
 using Utils.Users;
 using Microsoft.AspNetCore.Http;
-using TwitterWeb.Filters;
 
 namespace TwitterWeb.Controllers.Users
 {

@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Dtos.Users;
-using Utils.Common;
 using Utils.Users;
 
-namespace TwitterWeb.Filters
+namespace Utils.Common
 {
     public class Authorization : IAuthorizationFilter
     {

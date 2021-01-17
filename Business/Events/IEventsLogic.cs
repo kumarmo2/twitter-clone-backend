@@ -7,5 +7,6 @@ namespace Business.Events
     public interface IEventsLogic
     {
         Task<Result<UserQueue>> RegisterUserEvent(long userId);
+        Task<Result<string>> GetEvents(long userId, string queueName);
     }
 }
