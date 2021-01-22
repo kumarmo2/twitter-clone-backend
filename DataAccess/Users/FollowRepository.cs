@@ -43,6 +43,15 @@ namespace DataAccess.Users
             }
         }
 
+        public async Task<Follow> GetFollowById(long followId)
+        {
+            var query = "select * from users.follows where id = @id";
+            using (var con = _dbConnectionFactory.GetDbConnection())
+            {
+                return await con.QueryFirstOrDefaultAsync<Follow>(query, new { id = followId });
+            }
+        }
+
         public async Task UpdateStatus(long id, FollowStatus status)
         {
             var query = @"update users.follows

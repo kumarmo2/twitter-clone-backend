@@ -129,6 +129,26 @@ namespace Business.Users
             return result;
         }
 
+        public async Task<GenericResult<Follow, string>> GetFollow(long followId)
+        {
+            var result = new GenericResult<Follow, string>();
+            if (followId < 1)
+            {
+                result.Error = "Invalid Follow Id";
+                return result;
+            }
+
+            var follow = await _followRepository.GetFollowById(followId);
+            if (follow == null || follow.Id < 1)
+            {
+                result.Error = $"Could not find follow with the id {followId}";
+                return result;
+            }
+            result.SuccessResult = follow;
+            return result;
+
+        }
+
         private Follow GetFollow(FollowRequest createFollowRequest)
         {
             var id = _identityFactory.NextId();
