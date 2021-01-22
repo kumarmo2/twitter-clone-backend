@@ -44,6 +44,7 @@ namespace TwitterWeb
             services.AddSingleton<IEventsLogic, EventsLogic>();
             services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
             services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
+            services.AddSingleton<IUserEventsPublisher, UserEventsPublisher>();
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Authorization>();

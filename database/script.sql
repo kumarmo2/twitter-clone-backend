@@ -6,6 +6,14 @@ create schema if not exists events;
 ---------------- Schemas ends---------------------
 
 
+
+    ------------------ Types start ----------------------------
+
+    drop type if exists users.followstatus;
+    create type users.followstatus as enum('Pending', 'Accepted');
+
+    ------------------ Types start ----------------------------
+
 ------------------------ Tables Start -------------------------
 
     create table if not exists users.users
@@ -46,19 +54,10 @@ create table if not exists events.userqueues
 	userid bigint not null,
 	queuename varchar(50) not null,
 	constraint pk_userqueues_id primary key(id)
-);
-
+); 
 
 alter table events.userqueues
  add constraint fk_userqueues_users foreign key(userid) references users.users(id),
  add constraint ix_userqueues_userid_queuename unique(userid, queuename);
 
     ------------------------ Tables End -------------------------
-
-
-    ------------------ Types start ----------------------------
-
-    drop type if exists users.followstatus;
-    create type users.followstatus as enum('Pending', 'Accepted');
-
-    ------------------ Types start ----------------------------

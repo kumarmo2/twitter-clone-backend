@@ -1,5 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using RabbitMQ.Client;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Utils.Common
 {
@@ -24,5 +27,16 @@ namespace Utils.Common
         }
 
         public IModel GetChannel() => _connection.CreateModel();
+
+        public void PushToExchange<T>(string exchangeName, T payload, string exchangeType = "fanout", string routingKey = "")
+        where T : class
+        {
+            using (var channel = _connection.CreateModel())
+            {
+                channel.ExchangeDeclare(exchangeName, "fanout", durable: false, autoDelete: false, arguments: null);
+                var json = JsonConvert.SerializeObject(payload);
+                channel.BasicPublish(exchange: exchangeName, routingKey: routingKey, mandatory: false, basicProperties: null, body: Encoding.UTF8.GetBytes(json));
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 using Models.Users;
 using Dapper;
 using System.Threading.Tasks;
-using DataAccess;
 
 namespace DataAccess.Users
 {
