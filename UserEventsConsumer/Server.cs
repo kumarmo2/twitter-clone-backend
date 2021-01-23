@@ -31,15 +31,24 @@ namespace UserEventsConsumer
             using (var channel = _rabbitMqClient.GetChannel())
             {
                 channel.QueueDeclare(queue: Utils.Common.Constants.UserEventsConsumerQueue, durable: false, exclusive: false, autoDelete: false);
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new AsyncEventingBasicConsumer(channel); // For an async consumer, use `AsyncEventingBasicConsumer`
+                channel.BasicConsume(queue: Utils.Common.Constants.UserEventsConsumerQueue, true, consumer: consumer);
 
-                consumer.Received += (model, ea) =>
+                consumer.Received += async (model, ea) =>
                 {
-                    ThreadPool.QueueUserWorkItem<BasicDeliverEventArgs>(ConsumeMessage, ea, false);
+                    try
+                    {
+                        var json = Encoding.UTF8.GetString(ea.Body.ToArray());
+                        var userEvent = JsonConvert.DeserializeObject<UserEvent>(json);
+                        await _controller.ProcessEvent(userEvent);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"exception: {ex.ToString()}");
+                    }
                 };
 
                 Console.WriteLine("will start listening");
-                channel.BasicConsume(queue: Utils.Common.Constants.UserEventsConsumerQueue, true, consumer: consumer);
                 Console.ReadLine();
 
             }
@@ -50,8 +59,8 @@ namespace UserEventsConsumer
             try
             {
                 var json = Encoding.UTF8.GetString(ea.Body.ToArray());
-                // var userEvent = JsonConvert.DeserializeObject<UserEvent>(json);
-                _controller.ProcessEvent(json);
+                var userEvent = JsonConvert.DeserializeObject<UserEvent>(json);
+                _controller.ProcessEvent(userEvent).RunSynchronously();
             }
             catch (Exception ex)
             {

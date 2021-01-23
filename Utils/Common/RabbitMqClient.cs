@@ -11,7 +11,7 @@ namespace Utils.Common
         private static IConnection _connection;
         static RabbitMqClient()
         {
-            var cf = new ConnectionFactory();
+            var cf = new ConnectionFactory { DispatchConsumersAsync = true };
             cf.Uri = new Uri("amqp://guest:guest@localhost:/");
             _connection = cf.CreateConnection();
             Console.WriteLine("================================================ In static constructor===============================");

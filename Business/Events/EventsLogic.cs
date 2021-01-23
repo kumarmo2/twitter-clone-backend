@@ -80,13 +80,15 @@ namespace Business.Events
             {
                 channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new AsyncEventingBasicConsumer(channel);
                 consumer.Received += (model, ea) =>
                 {
                     var body = ea.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
                     Console.WriteLine($"message: {message}");
                     taskCompletionSource.SetResult(message);
+                    //TODO: test this changes.
+                    return Task.CompletedTask;
                 };
                 // TODO: make consumption of the events more robust.
                 channel.BasicConsume(queueName, true, consumer: consumer);

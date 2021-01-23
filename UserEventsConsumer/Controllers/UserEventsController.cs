@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Business.Users;
 using Dtos.Users;
@@ -33,7 +34,7 @@ namespace UserEventsConsumer.Controllers
 
         public Task ProcessEvent(string userEvent)
         {
-            Console.WriteLine("============ Processing event =================");
+            Console.WriteLine($"Processing event: {Thread.CurrentThread.Name}");
             return Task.CompletedTask;
         }
     }
