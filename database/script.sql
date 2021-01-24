@@ -2,6 +2,7 @@
 
 create schema if not exists users;
 create schema if not exists events;
+create schema if not exists notifications;
 
 ---------------- Schemas ends---------------------
 
@@ -32,6 +33,11 @@ create schema if not exists events;
  constraint pk_users_id primary key(id)
  );
 
+alter table users.users drop constraint if exists ix_users_email;
+
+alter table users.users
+    add constraint ix_users_email unique(email);
+
     create table if not exists users.follows
 (
  id bigint not null,
@@ -59,5 +65,28 @@ create table if not exists events.userqueues
 alter table events.userqueues
  add constraint fk_userqueues_users foreign key(userid) references users.users(id),
  add constraint ix_userqueues_userid_queuename unique(userid, queuename);
+
+
+ create table if not exists notifications.notificationtypes
+ (
+     id bigint not null,
+     name varchar(50) not null,
+     constraint pk_notificationtypes primary key(id),
+     constraint ix_notificationtypes_name unique(name)
+ );
+
+ create table if not exists notifications.notifications
+ (
+     id bigint not null,
+     userid bigint not null,
+     content text not null,
+     url text,
+     type bigint not null,
+     isseen boolean default(false),
+     constraint fk_notifications_notificationtypes_type foreign key(type) references notifications.notificationtypes(id),
+     constraint fk_notifications_users_userid foreign key(userid) references users.users(id),
+     constraint pk_notifications_id primary key(id)
+ );
+ 
 
     ------------------------ Tables End -------------------------

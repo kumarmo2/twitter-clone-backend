@@ -29,7 +29,6 @@ namespace UserEventsConsumer.Controllers
                 Console.WriteLine($">>> Error processing the user event, error: {result.Error}");
                 // TODO: check what is the error and requeue if possible.
             }
-
         }
 
         public Task ProcessEvent(string userEvent)

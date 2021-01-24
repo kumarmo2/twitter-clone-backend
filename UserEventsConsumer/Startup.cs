@@ -1,5 +1,7 @@
+using Business.Notifications;
 using Business.Users;
 using DataAccess;
+using DataAccess.Notifications;
 using DataAccess.Users;
 using Microsoft.Extensions.DependencyInjection;
 using UserEventsConsumer.Controllers;
@@ -24,6 +26,8 @@ namespace UserEventsConsumer
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IUserEventsPublisher, UserEventsPublisher>();
+            services.AddSingleton<INotificationRepository, NotificationRepository>();
+            services.AddSingleton<INotificationsLogic, NotificationLogic>();
 
         }
     }

@@ -31,6 +31,9 @@ namespace UserEventsConsumer
             using (var channel = _rabbitMqClient.GetChannel())
             {
                 channel.QueueDeclare(queue: Utils.Common.Constants.UserEventsConsumerQueue, durable: false, exclusive: false, autoDelete: false);
+
+                channel.QueueBind(Utils.Common.Constants.UserEventsConsumerQueue, Utils.Common.Constants.UserEventsExchangeName, "", null);
+
                 var consumer = new AsyncEventingBasicConsumer(channel); // For an async consumer, use `AsyncEventingBasicConsumer`
                 channel.BasicConsume(queue: Utils.Common.Constants.UserEventsConsumerQueue, true, consumer: consumer);
 
