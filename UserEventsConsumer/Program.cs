@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace UserEventsConsumer
 {
+    // TODO: Eventually, this should be a part of `UsersService`.
     class Program
     {
         static void Main(string[] args)
