@@ -23,6 +23,11 @@ namespace UserEventsConsumer
         public IServer InitializeServer()
         {
             ThreadPool.SetMaxThreads(Environment.ProcessorCount, Environment.ProcessorCount);
+            using (var channel = _rabbitMqClient.GetChannel())
+            {
+                // Create the exchange if not created.
+                channel.ExchangeDeclare(Utils.Common.Constants.UserEventsExchangeName, "fanout", durable: true);
+            }
             return this;
         }
 
@@ -30,8 +35,10 @@ namespace UserEventsConsumer
         {
             using (var channel = _rabbitMqClient.GetChannel())
             {
+                // Create the queue if not created.
                 channel.QueueDeclare(queue: Utils.Common.Constants.UserEventsConsumerQueue, durable: false, exclusive: false, autoDelete: false);
 
+                // Bind the queue.
                 channel.QueueBind(Utils.Common.Constants.UserEventsConsumerQueue, Utils.Common.Constants.UserEventsExchangeName, "", null);
 
                 var consumer = new AsyncEventingBasicConsumer(channel); // For an async consumer, use `AsyncEventingBasicConsumer`

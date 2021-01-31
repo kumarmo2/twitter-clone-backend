@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using Models.Events;
 using Dapper;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess.Events
 {
@@ -28,6 +30,20 @@ namespace DataAccess.Events
                 return await con.QueryFirstOrDefaultAsync<UserQueue>(query, new { userid = userId, queuename = queueName });
             }
 
+        }
+
+        public async Task<List<UserQueue>> GetAllUserQueues(long userId)
+        {
+            var query = "select * from events.userqueues where userid = @userid";
+            using (var con = _dbConnectionFactory.GetDbConnection())
+            {
+                var userQueues = await con.QueryAsync<UserQueue>(query, new { userid = userId });
+                if (userQueues != null)
+                {
+                    return userQueues.ToList();
+                }
+                return new List<UserQueue>();
+            }
         }
     }
 }

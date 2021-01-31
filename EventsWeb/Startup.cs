@@ -42,6 +42,7 @@ namespace EventsWeb
             services.AddSingleton<IUserQueueRepository, UserQueueRepository>();
             services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
             services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
+            services.AddSingleton<IEventsPublisher, EventsPublisher>();
 
         }
 

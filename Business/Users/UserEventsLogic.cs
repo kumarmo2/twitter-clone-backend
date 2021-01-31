@@ -7,6 +7,7 @@ using Dtos.Notifications;
 using userModels = Models.Users;
 using Dtos.Users;
 using Models.Notifications;
+using notificationModels = Models.Notifications;
 
 namespace Business.Users
 {
@@ -58,7 +59,7 @@ namespace Business.Users
             return result;
         }
 
-        private async Task<GenericResult<Notification, string>> CreateNotification(UserEvent userEvent, userModels.User follower, userModels.User followee)
+        private async Task<GenericResult<notificationModels.Notification, string>> CreateNotification(UserEvent userEvent, userModels.User follower, userModels.User followee)
         {
             // TODO: ideally these notificationtypeids should be fetched from persistent layer.
             long notificationType = userEvent.EventType == UserEventType.FollowRequestCreate ? 1 : 2;
