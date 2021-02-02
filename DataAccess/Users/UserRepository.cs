@@ -1,7 +1,6 @@
 using Models.Users;
 using Dapper;
 using System.Threading.Tasks;
-using DataAccess;
 
 namespace DataAccess.Users
 {
@@ -35,9 +34,13 @@ namespace DataAccess.Users
 
         }
 
-        public Task Get(long id)
+        public async Task<User> Get(long id)
         {
-            throw new System.NotImplementedException();
+            var query = "select * from users.users where id = @id";
+            using (var con = _dbConnectionFactory.GetDbConnection())
+            {
+                return await con.QueryFirstOrDefaultAsync<User>(query, new { id = id });
+            }
         }
 
         public async Task<User> GetByEmail(string email)

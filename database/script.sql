@@ -2,9 +2,18 @@
 
 create schema if not exists users;
 create schema if not exists events;
+create schema if not exists notifications;
 
 ---------------- Schemas ends---------------------
 
+
+
+    ------------------ Types start ----------------------------
+
+    drop type if exists users.followstatus;
+    create type users.followstatus as enum('Pending', 'Accepted');
+
+    ------------------ Types start ----------------------------
 
 ------------------------ Tables Start -------------------------
 
@@ -23,6 +32,11 @@ create schema if not exists events;
  constraint ix_users_handle unique(handle),
  constraint pk_users_id primary key(id)
  );
+
+alter table users.users drop constraint if exists ix_users_email;
+
+alter table users.users
+    add constraint ix_users_email unique(email);
 
     create table if not exists users.follows
 (
@@ -46,19 +60,33 @@ create table if not exists events.userqueues
 	userid bigint not null,
 	queuename varchar(50) not null,
 	constraint pk_userqueues_id primary key(id)
-);
-
+); 
 
 alter table events.userqueues
  add constraint fk_userqueues_users foreign key(userid) references users.users(id),
  add constraint ix_userqueues_userid_queuename unique(userid, queuename);
 
+
+ create table if not exists notifications.notificationtypes
+ (
+     id bigint not null,
+     name varchar(50) not null,
+     constraint pk_notificationtypes primary key(id),
+     constraint ix_notificationtypes_name unique(name)
+ );
+
+ create table if not exists notifications.notifications
+ (
+     id bigint not null,
+     userid bigint not null,
+     content text not null,
+     url text,
+     type bigint not null,
+     isseen boolean default(false),
+     constraint fk_notifications_notificationtypes_type foreign key(type) references notifications.notificationtypes(id),
+     constraint fk_notifications_users_userid foreign key(userid) references users.users(id),
+     constraint pk_notifications_id primary key(id)
+ );
+ 
+
     ------------------------ Tables End -------------------------
-
-
-    ------------------ Types start ----------------------------
-
-    drop type if exists users.followstatus;
-    create type users.followstatus as enum('Pending', 'Accepted');
-
-    ------------------ Types start ----------------------------

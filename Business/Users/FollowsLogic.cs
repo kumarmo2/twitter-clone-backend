@@ -5,6 +5,7 @@ using DataAccess.Users;
 using Models.Users;
 using Models.Tweets;
 using Utils;
+using Dtos.Users;
 
 namespace Business.Users
 {
@@ -12,10 +13,13 @@ namespace Business.Users
     {
         private readonly IFollowRepository _followRepository;
         private readonly IIdentityFactory _identityFactory;
-        public FollowsLogic(IFollowRepository followRepository, IIdentityFactory identityFactory)
+        private readonly IUserEventsPublisher _userEventsPublisher;
+        public FollowsLogic(IFollowRepository followRepository, IIdentityFactory identityFactory,
+        IUserEventsPublisher userEventsPublisher)
         {
             _followRepository = followRepository;
             _identityFactory = identityFactory;
+            _userEventsPublisher = userEventsPublisher;
         }
 
         public async Task<Result<bool>> AcceptFollowRequest(FollowRequest followRequest)
@@ -56,6 +60,14 @@ namespace Business.Users
             }
 
             await _followRepository.UpdateStatus(follow.Id, FollowStatus.Accepted);
+
+            var userEvent = new UserEvent
+            {
+                EventType = UserEventType.FollowRequestAccept,
+                FollowId = follow.Id
+            };
+            _userEventsPublisher.Publish(userEvent);
+
             result.SuccessResult = true;
             return result;
         }
@@ -102,9 +114,39 @@ namespace Business.Users
 
             follow = GetFollow(createFollowRequest);
             await _followRepository.Create(follow);
+
+            var userEvent = new UserEvent
+            {
+                EventType = UserEventType.FollowRequestCreate,
+                FollowId = follow.Id
+            };
+
+            _userEventsPublisher.Publish(userEvent);
+
+
             result.SuccessResult = true;
 
             return result;
+        }
+
+        public async Task<GenericResult<Follow, string>> GetFollow(long followId)
+        {
+            var result = new GenericResult<Follow, string>();
+            if (followId < 1)
+            {
+                result.Error = "Invalid Follow Id";
+                return result;
+            }
+
+            var follow = await _followRepository.GetFollowById(followId);
+            if (follow == null || follow.Id < 1)
+            {
+                result.Error = $"Could not find follow with the id {followId}";
+                return result;
+            }
+            result.SuccessResult = follow;
+            return result;
+
         }
 
         private Follow GetFollow(FollowRequest createFollowRequest)
