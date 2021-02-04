@@ -3,10 +3,9 @@
 create schema if not exists users;
 create schema if not exists events;
 create schema if not exists notifications;
+create schema if not exists tweets;
 
 ---------------- Schemas ends---------------------
-
-
 
     ------------------ Types start ----------------------------
 
@@ -87,6 +86,23 @@ alter table events.userqueues
      constraint fk_notifications_users_userid foreign key(userid) references users.users(id),
      constraint pk_notifications_id primary key(id)
  );
- 
+
+
+ create table if not exists tweets.tweets
+ (
+     id bigint not null,
+     authorid bigint not null,
+     createdat timestamp not null default(now()),
+     modifiedat timestamp not null default(now()),
+     content varchar(140) not null,
+     parenttweetid bigint null,
+     quotedtweetid bigint null,
+     retweetedtweetid bigint null,
+     constraint fk_tweets_tweets_retweetedtweetid foreign key(retweetedtweetid) references tweets.tweets(id),
+     constraint fk_tweets_tweets_quotedtweetid foreign key(quotedtweetid) references tweets.tweets(id),
+     constraint fk_tweets_tweets_parenttweetid foreign key(parenttweetid) references tweets.tweets(id),
+     constraint fk_tweets_users_authorid foreign key(authorid) references users.users(id),
+     constraint pk_tweets_id primary key(id)
+ );
 
     ------------------------ Tables End -------------------------

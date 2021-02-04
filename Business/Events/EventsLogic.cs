@@ -90,8 +90,9 @@ namespace Business.Events
                     var body = ea.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
                     Console.WriteLine($"message: {message}");
+                    // TODO: Ideally it would be good if could fetch multiple events if available and instead of List<ClientEvent>
+                    // instead of returning always a single event.
                     taskCompletionSource.SetResult(message);
-                    //TODO: test this changes.
                     return Task.CompletedTask;
                 };
                 // TODO: make consumption of the events more robust.
