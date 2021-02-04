@@ -12,6 +12,7 @@ using Business.Events;
 using DataAccess.Events;
 using Utils.Common;
 using Microsoft.AspNetCore.HttpOverrides;
+using System;
 
 namespace TwitterWeb
 {
@@ -35,6 +36,11 @@ namespace TwitterWeb
                 options.UseCamelCasing(false);
             });
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IUsersLogic, UsersLogic>();
@@ -48,7 +54,7 @@ namespace TwitterWeb
             services.AddSingleton<IEventsPublisher, EventsPublisher>();
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
-            services.AddSingleton<Authorization>();
+            services.AddSingleton<Utils.Common.Authorization>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,11 +70,14 @@ namespace TwitterWeb
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             }
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+            app.UseForwardedHeaders();
             app.UseStaticFiles();
+
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine(">>>>>> Request Received<<<<<<<<");
+                await next.Invoke();
+            });
 
             app.UseRouting();
 

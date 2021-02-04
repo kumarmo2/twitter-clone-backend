@@ -1,3 +1,4 @@
+using System;
 using Business.Events;
 using DataAccess;
 using DataAccess.Events;
@@ -57,6 +58,11 @@ namespace EventsWeb
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine(">>>> Request Recieved <<<<<<");
+                await next.Invoke();
             });
 
             app.UseRouting();
