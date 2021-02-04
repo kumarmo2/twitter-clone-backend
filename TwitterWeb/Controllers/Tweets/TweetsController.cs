@@ -5,6 +5,7 @@ using tweetModels = Models.Tweets;
 using Dtos.Users;
 using Microsoft.AspNetCore.Mvc;
 using Utils.Common;
+using Dtos;
 
 namespace TwitterWeb.Controllers.Tweets
 {
@@ -17,6 +18,7 @@ namespace TwitterWeb.Controllers.Tweets
         }
 
         [ServiceFilter(typeof(Authorization))]
+        [HttpPost]
         public async Task<IActionResult> CreateTweet(tweetDtos.CreateTweetRequest createTweetRequest)
         {
             var userAuthObject = Request.HttpContext.Items[Constants.AuthenticatedUserKey];
@@ -28,6 +30,10 @@ namespace TwitterWeb.Controllers.Tweets
             {
                 return Ok(result);
             }
+            return Ok(new GenericResult<tweetDtos.Tweet, string>
+            {
+                SuccessResult = GetTweetFromTweetModel(result.SuccessResult),
+            });
         }
 
         private static tweetDtos.Tweet GetTweetFromTweetModel(tweetModels.Tweet tweet) => new
