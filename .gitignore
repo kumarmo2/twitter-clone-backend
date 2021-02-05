@@ -3,6 +3,8 @@
 
 access_logs
 adminlogs
+redisData
+
 
 ## Write your rules here
 
