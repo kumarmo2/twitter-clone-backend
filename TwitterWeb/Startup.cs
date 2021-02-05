@@ -12,6 +12,8 @@ using Business.Events;
 using DataAccess.Events;
 using Utils.Common;
 using Microsoft.AspNetCore.HttpOverrides;
+using DataAccess.Tweets;
+using Business.Tweets;
 using System;
 
 namespace TwitterWeb
@@ -52,6 +54,8 @@ namespace TwitterWeb
             services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
             services.AddSingleton<IUserEventsPublisher, UserEventsPublisher>();
             services.AddSingleton<IEventsPublisher, EventsPublisher>();
+            services.AddSingleton<ITweetRepository, TweetRepository>();
+            services.AddSingleton<ITweetsLogic, TweetsLogic>();
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Utils.Common.Authorization>();

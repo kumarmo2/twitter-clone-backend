@@ -1,13 +1,9 @@
-using System;
 
-namespace Models.Tweets
+namespace Dtos.Tweets
 {
-    public class Tweet
+    public class CreateTweetRequest
     {
-        public long Id { get; set; }
         public long AuthorId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime ModifiedAt { get; set; }
         public string Content { get; set; }
         public long? ParentTweetId { get; set; }
         public long? QuotedTweetId { get; set; }
