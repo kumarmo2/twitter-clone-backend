@@ -4,6 +4,11 @@
 access_logs
 adminlogs
 redisData
+**/*node_modules
+public
+**/*dist
+**/*package-lock.json
+.devcontainer
 
 
 ## Write your rules here
