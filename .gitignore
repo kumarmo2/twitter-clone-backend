@@ -9,6 +9,8 @@ public
 **/*dist
 **/*package-lock.json
 .devcontainer
+**/*access_logs
+**/*admin_logs
 
 
 ## Write your rules here

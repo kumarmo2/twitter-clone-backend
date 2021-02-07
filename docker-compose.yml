@@ -15,6 +15,7 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+
   redis:
     image: redis:6.0.10-alpine
     ports:
@@ -22,6 +23,28 @@ services:
     volumes:
       - ./redisData:/data
       - ./redis.conf:/etc/redis/redis.conf
+
+  nginx:
+    image: nginx:1.19.6-alpine
+    ports:
+      - 7000:7000
+    volumes:
+      - ./nginx.docker.conf:/etc/nginx/nginx.conf
+      - ./public/:/usr/share/nginx/html/public/ 
+  
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.17-latest
+    ports:
+      - 80:80
+      - 9901:9901
+    volumes:
+      - ./envoy-docker.yaml:/etc/envoy/envoy.yaml
+      - ./envoy_logs:/var/log
+    environment:
+      # this is done because there were some permission issues.
+      # learn more here: https://www.envoyproxy.io/docs/envoy/latest/start/docker#start-docker
+      - ENVOY_UID=0
+    
 
 volumes:
   postgres:
