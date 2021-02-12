@@ -5,7 +5,8 @@ access_logs
 adminlogs
 redisData
 **/*node_modules
-public
+public/*index.html
+public/**/*.js
 **/*dist
 **/*package-lock.json
 .devcontainer
