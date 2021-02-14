@@ -46,7 +46,7 @@ static_resources:
                             prefix: "/events"
                           route:
                             cluster: events-web
-                            timeout: 105s
+                            timeout: 105s # increased the response timeout for events web
                         - match:
                             prefix: "/api"
                           route:
