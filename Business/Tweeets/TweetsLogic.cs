@@ -35,12 +35,12 @@ namespace Business.Tweets
             var tweet = CreateTweetFromCreateTweetRequest(createTweetRequest);
             await _tweetRepository.Create(tweet);
 
-            // TODO: trigger an TweetCreated Event.
-            // var tweetEvent = new TweetEvent
-            // {
-
-            // }
-            // _rabbitMqClient.PushToExchange(Constants.TweetsExchangeName, )
+            var tweetEvent = new TweetEvent
+            {
+                Type = TweetEventType.Created,
+                TweetId = tweet.Id
+            };
+            _rabbitMqClient.PushToExchange(Constants.TweetsExchangeName, tweetEvent);
 
             result.SuccessResult = tweet;
             return result;

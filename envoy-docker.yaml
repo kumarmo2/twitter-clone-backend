@@ -46,6 +46,7 @@ static_resources:
                             prefix: "/events"
                           route:
                             cluster: events-web
+                            timeout: 105s
                         - match:
                             prefix: "/api"
                           route:
@@ -76,7 +77,7 @@ static_resources:
                       # port_value: 5000
                       port_value: 6002 # Had to change this port from 5000 to 6002 as for some reason, `twitter-web` was not being accessed at 5000 from envoy running in docker container.
     - name: events-web
-      connect_timeout: 1s
+      connect_timeout: 100s
       # type: static
       type: strict_dns
       # type: logical_dns

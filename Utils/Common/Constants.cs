@@ -11,5 +11,6 @@ namespace Utils.Common
         public const string EventsExchangeName = "events.events-exchange";
         public const string EventsQueueName = "events.events-consumer-queue";
         public const string TweetsExchangeName = "tweets.tweets-events";
+        public const string TimeLineServiceConsumerQueue = "tweets.tweets-consumer-queue";
     }
 }
