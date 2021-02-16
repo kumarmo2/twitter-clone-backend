@@ -34,6 +34,7 @@ namespace TimeLineServiceConsumer
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<ITweetRepository, TweetRepository>();
             services.AddSingleton<IDbConnectionFactory, PostgresDbConnectionFactory>();
+            services.AddSingleton<IJsonUtils, JsonUtils>();
 
             services.AddRedisCacheManager(_config);
             return services;

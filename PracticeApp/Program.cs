@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using CommonLibs.RedisCache;
 using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PracticeApp
 {
@@ -29,6 +31,20 @@ namespace PracticeApp
             var cacheMananger = serviceProvider.GetService<IRedisCacheManager>();
             // >>>>>>>> Get Value <<<<<<<<<<<<<
 
+            cacheMananger.GetDatabase().ListRightPush("my-list", JsonSerializer.Serialize<int>(1));
+            cacheMananger.GetDatabase().ListRightPush("my-list", JsonSerializer.Serialize<int>(2));
+
+            var list = cacheMananger.GetDatabase().ListRange("my-list2", 0, 10);
+            var intList = list
+                            .Select(redisValue =>
+                            {
+                                return JsonSerializer.Deserialize<int>(redisValue.ToString());
+                            }).ToList();
+            // var intList = JsonSerializer.Deserialize<List<int>>(list.ToString());
+            // Console.WriteLine($"val: {intList[1]}");
+            Console.WriteLine($"length: {intList.Count}");
+
+            // cacheMananger.GetDatabase().ListRemoveAsync()
             // var value = cacheMananger.GetDatabase().StringGet("name");
             // if (value.IsNull)
             // {
