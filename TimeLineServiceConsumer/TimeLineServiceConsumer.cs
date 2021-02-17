@@ -54,6 +54,7 @@ namespace TimeLineServiceConsumer
                 };
 
                 channel.QueueDeclare(Utils.Common.Constants.TimeLineServiceConsumerQueue, durable: true, exclusive: false, autoDelete: false);
+                channel.QueueBind(Utils.Common.Constants.TimeLineServiceConsumerQueue, Utils.Common.Constants.TweetsExchangeName, string.Empty, null);
 
                 Console.WriteLine(">>>>>>>>>>>>> Tweets Events Consumer started <<<<<<<<<<<<<<<<<<<<<<");
 

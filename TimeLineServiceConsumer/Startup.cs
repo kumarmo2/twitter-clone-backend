@@ -9,6 +9,8 @@ using DataAccess;
 using Business.TimeLineService;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using DataAccess.TimeLineService;
+using Utils.TimeLineService;
 
 namespace TimeLineServiceConsumer
 {
@@ -28,6 +30,8 @@ namespace TimeLineServiceConsumer
             services.AddSingleton<TimeLineServiceController>();
             services.AddSingleton<HomeTimeLineService>();
             services.AddSingleton<ITimeLineServiceFactory, TimeLineServiceFactory>();
+            services.AddSingleton<ITimeLineRepository, TimeLineRepository>();
+            services.AddSingleton<ITimeLineServiceUtils, TimeLineServiceUtils>();
             services.AddSingleton<ITimeLineServiceLogic, TimeLineServiceLogic>();
             services.AddSingleton<IConsumerServer, TimeLineServiceConsumerServer>();
             services.AddSingleton<IRabbitMqClient, RabbitMqClient>();
