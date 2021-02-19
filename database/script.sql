@@ -7,12 +7,6 @@ create schema if not exists tweets;
 
 ---------------- Schemas ends---------------------
 
-    ------------------ Types start ----------------------------
-
-    drop type if exists users.followstatus;
-    create type users.followstatus as enum('Pending', 'Accepted');
-
-    ------------------ Types start ----------------------------
 
 ------------------------ Tables Start -------------------------
 
@@ -62,7 +56,9 @@ create table if not exists events.userqueues
 ); 
 
 alter table events.userqueues
+drop constraint fk_userqueues_users,
  add constraint fk_userqueues_users foreign key(userid) references users.users(id),
+ drop constraint ix_userqueues_userid_queuename,
  add constraint ix_userqueues_userid_queuename unique(userid, queuename);
 
 

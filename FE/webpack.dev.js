@@ -12,7 +12,7 @@ const config = {
   output: {
     filename: "[name].[contenthash:6].js",
     path: buildPath,
-    publicPath: "/assets/js",
+    publicPath: "/assets",
   },
   devtool: "inline-source-map",
   module: {
