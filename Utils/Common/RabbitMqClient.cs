@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Utils.Common
 {
+    // TODO: Should be moved to CommonLibs.
     public class RabbitMqClient : IRabbitMqClient
     {
         private static IConnection _connection;

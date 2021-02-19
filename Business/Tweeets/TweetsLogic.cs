@@ -4,6 +4,7 @@ using Dtos;
 using Dtos.Tweets;
 using tweetModels = Models.Tweets;
 using Utils;
+using Utils.Common;
 
 namespace Business.Tweets
 {
@@ -11,10 +12,12 @@ namespace Business.Tweets
     {
         private readonly IIdentityFactory _identityFactory;
         private readonly ITweetRepository _tweetRepository;
-        public TweetsLogic(IIdentityFactory identityFactory, ITweetRepository tweetRepository)
+        private readonly IRabbitMqClient _rabbitMqClient;
+        public TweetsLogic(IIdentityFactory identityFactory, ITweetRepository tweetRepository, IRabbitMqClient rabbitMqClient)
         {
             _identityFactory = identityFactory;
             _tweetRepository = tweetRepository;
+            _rabbitMqClient = rabbitMqClient;
         }
         public async Task<GenericResult<tweetModels.Tweet, string>> CreateTweet(CreateTweetRequest createTweetRequest)
         {
@@ -32,7 +35,12 @@ namespace Business.Tweets
             var tweet = CreateTweetFromCreateTweetRequest(createTweetRequest);
             await _tweetRepository.Create(tweet);
 
-            // TODO: trigger an TweetCreated Event.
+            var tweetEvent = new TweetEvent
+            {
+                Type = TweetEventType.Created,
+                TweetId = tweet.Id
+            };
+            _rabbitMqClient.PushToExchange(Constants.TweetsExchangeName, tweetEvent);
 
             result.SuccessResult = tweet;
             return result;

@@ -52,7 +52,7 @@ namespace TwitterWeb.Controllers.Users
 
         [ServiceFilter(typeof(Authorization))]
         [HttpPost("signout")]
-        public IActionResult SignOut()
+        public new IActionResult SignOut()
         {
             Response.Cookies.Delete(Constants.AuthCookieName);
             return Ok();

@@ -3,6 +3,7 @@ using RabbitMQ.Client;
 
 namespace Utils.Common
 {
+    // TODO: Should be moved to CommonLibs.
     public interface IRabbitMqClient
     {
         void DeclareQueue(string queueName);

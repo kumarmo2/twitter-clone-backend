@@ -63,21 +63,5 @@ namespace UserEventsConsumer
 
             }
         }
-
-        private void ConsumeMessage(BasicDeliverEventArgs ea)
-        {
-            try
-            {
-                var json = Encoding.UTF8.GetString(ea.Body.ToArray());
-                var userEvent = JsonConvert.DeserializeObject<UserEvent>(json);
-                _controller.ProcessEvent(userEvent).RunSynchronously();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ex: {ex.ToString()}");
-            }
-
-        }
-
     }
 }
