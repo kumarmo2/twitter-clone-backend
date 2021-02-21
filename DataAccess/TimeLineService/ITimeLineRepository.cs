@@ -6,7 +6,7 @@ namespace DataAccess.TimeLineService
 {
     public interface ITimeLineRepository
     {
-        Task<long> AddToHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry);
+        Task AddToHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry);
         Task<long> DeleteTweetFromHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry);
     }
 }
