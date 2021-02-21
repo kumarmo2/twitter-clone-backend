@@ -30,19 +30,28 @@ namespace PracticeApp
 
             var cacheMananger = serviceProvider.GetService<IRedisCacheManager>();
             // >>>>>>>> Get Value <<<<<<<<<<<<<
+            var cache = cacheMananger.GetDatabase();
 
-            cacheMananger.GetDatabase().ListRightPush("my-list", JsonSerializer.Serialize<int>(1));
-            cacheMananger.GetDatabase().ListRightPush("my-list", JsonSerializer.Serialize<int>(2));
+            // var values = cache.SortedSetRangeByScore("asdf", order: StackExchange.Redis.Order.Descending, start: 3, stop: double.NegativeInfinity, skip: 0, take: 2);
+            // cache.SortedSetAdd()
+            // foreach (var value in values)
+            // {
+            //     Console.WriteLine($"value: {value.ToString()}");
+            // }
+            // cache.SortedSetRemoveRangeByScore()
 
-            var list = cacheMananger.GetDatabase().ListRange("my-list2", 0, 10);
-            var intList = list
-                            .Select(redisValue =>
-                            {
-                                return JsonSerializer.Deserialize<int>(redisValue.ToString());
-                            }).ToList();
-            // var intList = JsonSerializer.Deserialize<List<int>>(list.ToString());
-            // Console.WriteLine($"val: {intList[1]}");
-            Console.WriteLine($"length: {intList.Count}");
+            // cacheMananger.GetDatabase().ListRightPush("my-list", JsonSerializer.Serialize<int>(1));
+            // cacheMananger.GetDatabase().ListRightPush("my-list", JsonSerializer.Serialize<int>(2));
+
+            // var list = cacheMananger.GetDatabase().ListRange("my-list2", 0, 10);
+            // var intList = list
+            //                 .Select(redisValue =>
+            //                 {
+            //                     return JsonSerializer.Deserialize<int>(redisValue.ToString());
+            //                 }).ToList();
+            // // var intList = JsonSerializer.Deserialize<List<int>>(list.ToString());
+            // // Console.WriteLine($"val: {intList[1]}");
+            // Console.WriteLine($"length: {intList.Count}");
 
             // cacheMananger.GetDatabase().ListRemoveAsync()
             // var value = cacheMananger.GetDatabase().StringGet("name");

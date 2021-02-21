@@ -13,5 +13,7 @@ namespace CommonLibs.RedisCache
         Task<long> ListLeftPush<T>(string key, T value);
         Task<List<T>> ListRange<T>(string key, long start = 0, long stop = -1);
         Task<long> ListRemove<T>(string key, T payload, long count = 0);
+        Task SortedSetAdd<T>(string key, T value, long score);
+        Task<long> SortedSetRemoveRangeByScore(string key, long start, long stop);
     }
 }

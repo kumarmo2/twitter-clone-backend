@@ -95,5 +95,24 @@ namespace CommonLibs.RedisCache
             var cache = _redis.Value.GetDatabase();
             await cache.StringSetAsync(key, json);
         }
+
+        public async Task SortedSetAdd<T>(string key, T value, long score)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentException($"'{nameof(key)}' cannot be null or whitespace.", nameof(key));
+            }
+
+            var json = JsonConvert.SerializeObject(value);
+            var cache = _redis.Value.GetDatabase();
+
+            await cache.SortedSetAddAsync(key, json, score);
+        }
+
+        public async Task<long> SortedSetRemoveRangeByScore(string key, long start, long stop)
+        {
+            var cache = _redis.Value.GetDatabase();
+            return await cache.SortedSetRemoveRangeByScoreAsync(key, start, stop);
+        }
     }
 }

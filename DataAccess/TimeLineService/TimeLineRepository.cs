@@ -14,18 +14,16 @@ namespace DataAccess.TimeLineService
             _redisCacheManger = redisCacheManager;
             _timeLineServiceUtils = timeLineServiceUtils;
         }
-        public async Task<long> AddToHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry)
+        public async Task AddToHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry)
         {
             var cacheKey = _timeLineServiceUtils.GetHomeTimeLineCacheKey(userId);
-            return await _redisCacheManger.ListLeftPush<HomeTimeLineEntry>(cacheKey, homeTimeLineEntry);
+            await _redisCacheManger.SortedSetAdd<HomeTimeLineEntry>(cacheKey, homeTimeLineEntry, homeTimeLineEntry.TweetId);
         }
 
         public async Task<long> DeleteTweetFromHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry)
         {
-            // TODO: since hometimeline can have thousands of entries, deleting a single element
-            // could take a toll on redis. as deleting an item from list is 0(n).
             var cacheKey = _timeLineServiceUtils.GetHomeTimeLineCacheKey(userId);
-            return await _redisCacheManger.ListRemove(cacheKey, homeTimeLineEntry);
+            return await _redisCacheManger.SortedSetRemoveRangeByScore(cacheKey, homeTimeLineEntry.TweetId, homeTimeLineEntry.TweetId);
         }
     }
 }
