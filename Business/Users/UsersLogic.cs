@@ -99,5 +99,24 @@ namespace Business.Users
             result.SuccessResult = user;
             return result;
         }
+
+        public async Task<Result<userModels.User>> GetUser(long userId)
+        {
+            if (userId < 1)
+            {
+                throw new BusinessException("Invalid userId");
+            }
+            var user = await _userRepository.Get(userId);
+
+            if (user == null || user.Id < 1)
+            {
+                throw new BusinessException("No User Found");
+            }
+
+            return new Result<userModels.User>
+            {
+                SuccessResult = user
+            };
+        }
     }
 }

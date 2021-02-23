@@ -2,7 +2,8 @@ using System.Threading.Tasks;
 using Models.Tweets;
 using Dapper;
 using Models.Users;
-using DataAccess;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess.Users
 {
@@ -49,6 +50,16 @@ namespace DataAccess.Users
             using (var con = _dbConnectionFactory.GetDbConnection())
             {
                 return await con.QueryFirstOrDefaultAsync<Follow>(query, new { id = followId });
+            }
+        }
+
+        public async Task<List<Follow>> GetFollowers(long userId)
+        {
+            var query = "select * from users.follows where followeeid = @followeeid";
+            using (var con = _dbConnectionFactory.GetDbConnection())
+            {
+                var result = await con.QueryAsync<Follow>(query, new { followeeid = userId });
+                return result != null ? result.ToList() : null;
             }
         }
 

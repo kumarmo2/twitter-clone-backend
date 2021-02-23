@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using DataAccess.TimeLineService;
 using Utils.TimeLineService;
+using Business.Users;
+using DataAccess.Users;
 
 namespace TimeLineServiceConsumer
 {
@@ -29,7 +31,11 @@ namespace TimeLineServiceConsumer
         {
             services.AddSingleton<TimeLineServiceController>();
             services.AddSingleton<HomeTimeLineService>();
+            services.AddSingleton<NewsFeedTimeLineService>();
             services.AddSingleton<ITimeLineServiceFactory, TimeLineServiceFactory>();
+            services.AddSingleton<IFollowsLogic, FollowsLogic>();
+            services.AddSingleton<IUsersLogic, UsersLogic>();
+            services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<ITimeLineRepository, TimeLineRepository>();
             services.AddSingleton<ITimeLineServiceUtils, TimeLineServiceUtils>();
             services.AddSingleton<ITimeLineServiceLogic, TimeLineServiceLogic>();
