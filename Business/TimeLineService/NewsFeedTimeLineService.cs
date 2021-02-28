@@ -26,6 +26,7 @@ namespace Business.TimeLineService
             _usersLogic = usersLogic;
             _timeLineRepository = timeLineRepository;
         }
+        // TODO: need to test the NewsFeedTimeLine functionality
         public async Task<Result<bool>> ProcessTweetEvent(TweetEvent tweetEvent)
         {
             if (tweetEvent is null)
@@ -49,24 +50,38 @@ namespace Business.TimeLineService
             var followersResult = followersTask.Result;
 
 
-            var usersIds = new List<long>();
-            usersIds.Add(userId);
+            var userIds = new List<long>();
+            userIds.Add(userId);
 
             if (followersResult.SuccessResult.IsNotEmpty())
             {
-                usersIds.AddRange(followersResult.SuccessResult.Select(follows => follows.FollowerId));
+                userIds.AddRange(followersResult.SuccessResult.Select(follows => follows.FollowerId));
 
             }
             if (tweetEvent.Type == TweetEventType.Created)
             {
-                await ProcessCreateTweetEvent(usersIds, tweetEvent);
+                await ProcessCreateTweetEvent(userIds, tweetEvent);
             }
-
+            else if (tweetEvent.Type == TweetEventType.Deleted)
+            {
+                await ProcessDeleteTweetEvent(userIds, tweetEvent);
+            }
+            else
+            {
+                throw new BusinessException("Unhandled Tweet Event Type");
+            }
 
             result.SuccessResult = true;
 
             return result;
         }
+
+        private async Task ProcessDeleteTweetEvent(List<long> userIds, TweetEvent tweetEvent)
+        {
+            var tasks = userIds.Select(userId => _timeLineRepository.DeleteFromNewsFeedTimeLine(userId, tweetEvent.TweetId));
+            await Task.WhenAll(tasks);
+        }
+
 
         private async Task ProcessCreateTweetEvent(List<long> userIds, TweetEvent tweetEvent)
         {

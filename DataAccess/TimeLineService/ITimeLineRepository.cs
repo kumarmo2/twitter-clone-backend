@@ -8,5 +8,6 @@ namespace DataAccess.TimeLineService
         Task AddToHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry);
         Task<long> DeleteTweetFromHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry);
         Task AddToNewsFeedTimeLine(long userId, NewsFeedTimeLineEntry newsFeedTimeLineEntry);
+        Task DeleteFromNewsFeedTimeLine(long userId, long tweetId);
     }
 }
