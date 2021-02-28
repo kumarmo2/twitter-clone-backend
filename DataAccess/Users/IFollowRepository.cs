@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models.Tweets;
 using Models.Users;
@@ -11,5 +12,6 @@ namespace DataAccess.Users
         Task Create(Follow follow);
         Task Delete(long followId);
         Task UpdateStatus(long id, FollowStatus status);
+        Task<List<Follow>> GetFollowers(long userId);
     }
 }

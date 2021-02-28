@@ -9,5 +9,7 @@ namespace Business.Users
     {
         Task<Result<userModels.User>> CreateUser(CreateUserRequest createUserRequest);
         Task<Result<userModels.User>> LoginUser(LoginRequest loginRequest);
+        Task<Result<userModels.User>> GetUser(long userId);
+
     }
 }

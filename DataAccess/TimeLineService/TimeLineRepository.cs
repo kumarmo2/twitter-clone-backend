@@ -20,6 +20,19 @@ namespace DataAccess.TimeLineService
             await _redisCacheManger.SortedSetAdd<HomeTimeLineEntry>(cacheKey, homeTimeLineEntry, homeTimeLineEntry.TweetId);
         }
 
+        public async Task AddToNewsFeedTimeLine(long userId, NewsFeedTimeLineEntry newsFeedTimeLineEntry)
+        {
+            var cacheKey = _timeLineServiceUtils.GetNewsFeedTimeLineCacheKey(userId);
+            await _redisCacheManger.SortedSetAdd<NewsFeedTimeLineEntry>(cacheKey, newsFeedTimeLineEntry, newsFeedTimeLineEntry.TweetId);
+        }
+
+        public async Task DeleteFromNewsFeedTimeLine(long userId, long tweetId)
+        {
+            var cacheKey = _timeLineServiceUtils.GetNewsFeedTimeLineCacheKey(userId);
+            await _redisCacheManger.SortedSetRemoveRangeByScore(cacheKey, tweetId, tweetId);
+        }
+
+        // TODO: need to test this.
         public async Task<long> DeleteTweetFromHomeTimeLine(long userId, HomeTimeLineEntry homeTimeLineEntry)
         {
             var cacheKey = _timeLineServiceUtils.GetHomeTimeLineCacheKey(userId);

@@ -6,6 +6,8 @@ using Models.Users;
 using Models.Tweets;
 using Utils;
 using Dtos.Users;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Business.Users
 {
@@ -145,6 +147,21 @@ namespace Business.Users
                 return result;
             }
             result.SuccessResult = follow;
+            return result;
+
+        }
+
+        public async Task<Result<List<Follow>>> GetFollowers(long userId)
+        {
+            var result = new Result<List<Follow>>();
+
+            var followers = await _followRepository.GetFollowers(userId);
+            if (followers == null || !followers.Any())
+            {
+                result.SuccessResult = new List<Follow>();
+                return result;
+            }
+            result.SuccessResult = followers;
             return result;
 
         }
