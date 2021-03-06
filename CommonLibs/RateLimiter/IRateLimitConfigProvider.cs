@@ -4,6 +4,6 @@ namespace CommonLibs.RateLimiter
 {
     public interface IRateLimitConfigProvider
     {
-        IEnumerable<RateLimitConfigOptions> GeConfig();
+        IEnumerable<RateLimitConfigOptions> GetConfig();
     }
 }

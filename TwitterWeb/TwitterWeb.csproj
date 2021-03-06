@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Dtos\Dtos.csproj" />
     <ProjectReference Include="..\Business\Business.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
+    <ProjectReference Include="..\CommonLibs\RateLimiter\RateLimiter.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@ namespace CommonLibs.RateLimiter
 
     class StaticConfigRateLimitConfigProvider : IRateLimitConfigProvider
     {
-        public IEnumerable<RateLimitConfigOptions> GeConfig()
+        public IEnumerable<RateLimitConfigOptions> GetConfig()
         {
             return new List<RateLimitConfigOptions>()
             {
@@ -17,6 +17,7 @@ namespace CommonLibs.RateLimiter
                     PerSecLimit = 2,
                 }
             };
+
         }
     }
 }
