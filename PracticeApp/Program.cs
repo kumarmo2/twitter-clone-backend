@@ -32,6 +32,12 @@ namespace PracticeApp
             // >>>>>>>> Get Value <<<<<<<<<<<<<
             var cache = cacheMananger.GetDatabase();
 
+            var value = cache.HashGet("sfsdl", "sfsd");
+            if (value.IsNull)
+            {
+                Console.WriteLine("value is null or empty");
+            }
+
             // var values = cache.SortedSetRangeByScore("asdf", order: StackExchange.Redis.Order.Descending, start: 3, stop: double.NegativeInfinity, skip: 0, take: 2);
             // cache.SortedSetAdd()
             // foreach (var value in values)
@@ -80,7 +86,6 @@ namespace PracticeApp
             //     Console.WriteLine($"Value: {JsonSerializer.Deserialize<int>(value.ToString())}");
             // }
             // cacheMananger.SetRecord<int>("intVal", 123);
-            Console.WriteLine($"value: {cacheMananger.GetRecord<int>("intVal").Result}");
 
         }
     }

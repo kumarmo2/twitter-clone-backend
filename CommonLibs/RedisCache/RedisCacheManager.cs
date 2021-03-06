@@ -34,6 +34,15 @@ namespace CommonLibs.RedisCache
             return JsonConvert.DeserializeObject<T>(redisValue.ToString());
         }
 
+        public async Task<RedisValue[]> HashGet(string key, string[] hasFields)
+        {
+            var cache = _redis.Value.GetDatabase();
+
+            var fields = hasFields.Select(field => new RedisValue(field)).ToArray();
+            var values = await cache.HashGetAsync(key, fields);
+            return values;
+        }
+
         // Returns length of the list
         public async Task<long> ListLeftPush<T>(string key, T value)
         {
