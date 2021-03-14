@@ -25,6 +25,7 @@ namespace TwitterWeb.MiddleWares
             Console.WriteLine(">>>>>>>>>>>>>>>>>>> from class middle ware ");
             var cookies = context.Request.Cookies;
 
+            //TODO: we need to figure out some way that we don't have to replicate the logic for authorization here.
             if (cookies.TryGetValue(Constants.AuthCookieName, out var value))
             {
                 Console.WriteLine($"path: {context.Request.Path}\nmethod: {context.Request.Method}");
@@ -32,11 +33,16 @@ namespace TwitterWeb.MiddleWares
                 UserAuthDto userAuthDto = null;
                 if (_userUtils.TryValidatedAuthCookie(value, out userAuthDto))
                 {
-                    await _rateLimiter.ShouldThrottle(context.Request.Method, context.Request.Path, userAuthDto.UserId.ToString());
+                    var shouldThrottle = await _rateLimiter.ShouldThrottle(context.Request.Method, context.Request.Path, userAuthDto.UserId.ToString());
+                    if (shouldThrottle)
+                    {
+                        Console.WriteLine("throttling the api");
+                        context.Response.StatusCode = 429;
+                        return;
+                    }
                 }
-
-                // _rateLimiter.ShouldThrottle()
             }
+            Console.WriteLine("next middleware in the pipleine is called");
             await _next(context);
         }
     }

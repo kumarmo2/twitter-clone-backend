@@ -123,5 +123,10 @@ namespace CommonLibs.RedisCache
             var cache = _redis.Value.GetDatabase();
             return await cache.SortedSetRemoveRangeByScoreAsync(key, start, stop);
         }
+        public async Task<long> HashIncrementAsync(string key, string hashField, long value = 1)
+        {
+            var cache = _redis.Value.GetDatabase();
+            return await cache.HashIncrementAsync(key, hashField, value);
+        }
     }
 }

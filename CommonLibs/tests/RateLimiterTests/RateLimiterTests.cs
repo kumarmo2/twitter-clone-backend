@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
 using CommonLibs.RateLimiter;
-using Moq;
 using Xunit;
-using CommonLibs.RedisCache;
 using System;
 
 namespace CommonLibs.Tests.RateLimterTests

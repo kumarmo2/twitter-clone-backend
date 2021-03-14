@@ -88,6 +88,7 @@ namespace TwitterWeb
                 Console.WriteLine(">>>>>> Request Received<<<<<<<<");
                 await next.Invoke();
             });
+            app.UseMiddleware<RateLimiterMiddleWare>();
 
             app.UseRouting();
 

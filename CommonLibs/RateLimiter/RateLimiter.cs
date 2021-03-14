@@ -27,8 +27,10 @@ namespace CommonLibs.RateLimiter
 
         public async Task<bool> ShouldThrottle(string httpMethod, string fullPath, string userId)
         {
+            // TODO: needs major REFACTORING.
             // TODO: need to think about the endsWithPath approach.
             // if in the config, someone adds "/" as endsWiPath, which is basically catch all. so how to prevent this?
+            Console.WriteLine("should throttle called");
             if (string.IsNullOrEmpty(httpMethod))
             {
                 throw new ArgumentException($"'{nameof(httpMethod)}' cannot be null or empty.", nameof(httpMethod));
@@ -44,18 +46,26 @@ namespace CommonLibs.RateLimiter
                 throw new ArgumentException($"'{nameof(userId)}' cannot be null or whitespace.", nameof(userId));
             }
             // TODO: optimize this searching.
-            var endsWithPath = _configDictionary.Value.Keys.FirstOrDefault(endsWithPath => fullPath.EndsWith(endsWithPath));
-            if (string.IsNullOrWhiteSpace(endsWithPath))
+            Console.WriteLine($"fullPath: {fullPath}");
+            var configOption = _configDictionary.Value.Values.FirstOrDefault(config =>
             {
-                return false;
-            }
-            _configDictionary.Value.TryGetValue(endsWithPath, out var configOption);
+                // Console.WriteLine($"config key: {}");
+                return fullPath.EndsWith(config.EndsWithPath);
+            });
+            // Console.WriteLine($"endswithpath: {endsWithPath}");
+            // if (string.IsNullOrWhiteSpace(endsWithPath))
+            // {
+            //     Console.WriteLine(">>>>>> terminating from here<<<<<<<<<<<<");
+            //     return false;
+            // }
+            // _configDictionary.Value.TryGetValue(endsWithPath, out var configOption);
             if (configOption == null)
             {
                 return false;
             }
             var perMinLimit = configOption.PerMinLimit;
             var perSecLimit = configOption.PerSecLimit;
+            Console.WriteLine($"perMinLimit: {perMinLimit}");
 
             var userRateLimitConfigCacheKey = Utils.GetPerUserPerRateLimitConfigCacheKey(userId, configOption);
 
@@ -74,8 +84,10 @@ namespace CommonLibs.RateLimiter
                 var currMinValue = values[1];
                 if (currMinValue.IsNull)
                 {
+                    await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
+
                     // TODO: 
-                    // increment counter for current min and current second.
+                    // increment counter for current min and current second(only if there is a rule for per seconds too)
                     return false;
                 }
                 currMinValue.TryParse(out int currMinIntegerValue);
@@ -86,7 +98,9 @@ namespace CommonLibs.RateLimiter
                 var prevMinValue = values[0];
                 if (prevMinValue.IsNull)
                 {
-                    // Increment counter for current min and curr second.
+                    await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
+                    // TODO: 
+                    // increment counter for current min and current second(only if there is a rule for per seconds too)
                     return false;
                 }
                 prevMinValue.TryParse(out int prevMinIntergerValue);
@@ -101,6 +115,8 @@ namespace CommonLibs.RateLimiter
                     return true;
                 }
                 // if we reach this point that means this request has passed the  perMinLimit
+                // TODO: we should only increment the counter if there are no further rules to counter.
+                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
 
 
                 // TODO: implement logic for throttling on per second limit.

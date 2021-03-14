@@ -16,5 +16,6 @@ namespace CommonLibs.RedisCache
         Task SortedSetAdd<T>(string key, T value, long score);
         Task<long> SortedSetRemoveRangeByScore(string key, long start, long stop);
         Task<RedisValue[]> HashGet(string key, string[] hasFields);
+        Task<long> HashIncrementAsync(string key, string hashField, long value = 1);
     }
 }

@@ -33,6 +33,7 @@ namespace PracticeApp
             var cache = cacheMananger.GetDatabase();
 
             var value = cache.HashGet("sfsdl", "sfsd");
+            // cache.HashIncrementAsync()
             if (value.IsNull)
             {
                 Console.WriteLine("value is null or empty");
