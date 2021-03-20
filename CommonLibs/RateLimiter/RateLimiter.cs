@@ -2,19 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibs.RateLimiter.Throttlers;
 using CommonLibs.RedisCache;
 namespace CommonLibs.RateLimiter
 {
-    public class RedisRateLimiter : IRateLimiter
+    internal class RedisRateLimiter : IRateLimiter
     {
         private IRateLimitConfigProvider _configProvider;
         private IRedisCacheManager _cacheManager;
         private Lazy<Dictionary<string, RateLimitConfigOptions>> _configDictionary;
+        private readonly IRequestThrottlerFactory _requestThrottlerFactory;
 
-        public RedisRateLimiter(IRateLimitConfigProvider configProvider, IRedisCacheManager cacheManager)
+        public RedisRateLimiter(IRateLimitConfigProvider configProvider, IRedisCacheManager cacheManager,
+        IRequestThrottlerFactory requestThrottlerFactory)
         {
             _configProvider = configProvider;
             _cacheManager = cacheManager;
+            _requestThrottlerFactory = requestThrottlerFactory;
             _configDictionary = new Lazy<Dictionary<string, RateLimitConfigOptions>>(() =>
             {
                 // It is the responsibility of the configProvider that it doesn't give multiple same configs
@@ -52,80 +56,20 @@ namespace CommonLibs.RateLimiter
                 // Console.WriteLine($"config key: {}");
                 return fullPath.EndsWith(config.EndsWithPath);
             });
-            // Console.WriteLine($"endswithpath: {endsWithPath}");
-            // if (string.IsNullOrWhiteSpace(endsWithPath))
-            // {
-            //     Console.WriteLine(">>>>>> terminating from here<<<<<<<<<<<<");
-            //     return false;
-            // }
-            // _configDictionary.Value.TryGetValue(endsWithPath, out var configOption);
             if (configOption == null)
             {
                 return false;
             }
-            var perMinLimit = configOption.PerMinLimit;
-            var perSecLimit = configOption.PerSecLimit;
-            Console.WriteLine($"perMinLimit: {perMinLimit}");
-
-            var userRateLimitConfigCacheKey = Utils.GetPerUserPerRateLimitConfigCacheKey(userId, configOption);
-
-            if (perMinLimit > 0)
+            var throttler = _requestThrottlerFactory.GetRequestThrottler(configOption);
+            if (throttler != null)
             {
-                var now = DateTime.Now;
-                var currMin = now.AddSeconds(-1 * now.Second);
-                var prevMin = currMin.AddMinutes(-1);
-                var hashFields = new string[] { prevMin.ToString(), currMin.ToString() };
-                var values = await _cacheManager.HashGet(userRateLimitConfigCacheKey, hashFields);
-                if (values == null || values.Length < 2)
+                return await throttler.ShouldThrottle(new ThrottleRequest
                 {
-                    Console.WriteLine("some error while retriving date from redis. Allowing the request to not throttle. But look into this");
-                    return false;
-                }
-                var currMinValue = values[1];
-                if (currMinValue.IsNull)
-                {
-                    await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
-
-                    // TODO: 
-                    // increment counter for current min and current second(only if there is a rule for per seconds too)
-                    return false;
-                }
-                currMinValue.TryParse(out int currMinIntegerValue);
-                if (currMinIntegerValue >= perMinLimit)
-                {
-                    return true;
-                }
-                var prevMinValue = values[0];
-                if (prevMinValue.IsNull)
-                {
-                    await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
-                    // TODO: 
-                    // increment counter for current min and current second(only if there is a rule for per seconds too)
-                    return false;
-                }
-                prevMinValue.TryParse(out int prevMinIntergerValue);
-                var currWindowStart = now.AddMinutes(-1);
-
-                var x = currMin - prevMin;
-                var y = currMin - currWindowStart;
-
-                var calculatedvalue = (int)((y / x) * prevMinIntergerValue + currMinIntegerValue);
-                if (calculatedvalue >= perMinLimit)
-                {
-                    return true;
-                }
-                // if we reach this point that means this request has passed the  perMinLimit
-                // TODO: we should only increment the counter if there are no further rules to counter.
-                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
-
-
-                // TODO: implement logic for throttling on per second limit.
-
-                return false;
+                    AppliedConfig = configOption,
+                    UserId = userId
+                });
             }
             return false;
-
-
         }
     }
 }

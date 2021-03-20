@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
+using CommonLibs.RedisCache;
 using Microsoft.Extensions.DependencyInjection;
+using CommonLibs.RateLimiter.Throttlers;
 
 namespace CommonLibs.RateLimiter.Extensions
 {
@@ -16,8 +18,11 @@ namespace CommonLibs.RateLimiter.Extensions
             services.AddSingleton<IRateLimitConfigProvider>(new LocalRateLimitConfigProvider(configuration));
         }
 
-        public static void AddRateLimiter(this IServiceCollection services)
+        public static void AddRateLimiter(this IServiceCollection services, IConfiguration configuration)
         {
+            // Adding redis here only as this library depends on it.
+            services.AddRedisCacheManager(configuration);
+            services.AddSingleton<IRequestThrottlerFactory, RequestThrottlerFactory>();
             services.AddSingleton<IRateLimiter, RedisRateLimiter>();
         }
 

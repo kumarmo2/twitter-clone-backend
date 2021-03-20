@@ -61,7 +61,7 @@ namespace TwitterWeb
             services.AddRedisCacheManager(Configuration);
             services.AddSingleton<ITweetsLogic, TweetsLogic>();
             services.AddLocalRateLimitConfigProvider(Configuration);
-            services.AddRateLimiter();
+            services.AddRateLimiter(Configuration);
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Utils.Common.Authorization>();
