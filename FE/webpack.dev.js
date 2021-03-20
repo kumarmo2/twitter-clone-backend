@@ -14,6 +14,9 @@ const config = {
     path: buildPath,
     publicPath: "/assets",
   },
+  devServer: {
+    port: 3000,
+  },
   devtool: "inline-source-map",
   module: {
     // loaders transforms the assets
