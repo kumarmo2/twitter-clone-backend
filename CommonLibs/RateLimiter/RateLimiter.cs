@@ -31,7 +31,6 @@ namespace CommonLibs.RateLimiter
 
         public async Task<bool> ShouldThrottle(string httpMethod, string fullPath, string userId)
         {
-            // TODO: needs major REFACTORING.
             // TODO: need to think about the endsWithPath approach.
             // if in the config, someone adds "/" as endsWiPath, which is basically catch all. so how to prevent this?
             Console.WriteLine("should throttle called");
