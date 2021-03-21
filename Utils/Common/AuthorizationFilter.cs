@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Dtos.Users;
 using Utils.Users;
+using System;
 
 namespace Utils.Common
 {
@@ -25,6 +26,7 @@ namespace Utils.Common
                 context.Result = new UnauthorizedResult();
                 return;
             }
+            Console.WriteLine(">>>>>>>>>>>>>authorization cleared <<<<<<<<<<<<<<<");
             context.HttpContext.Items.Add(Constants.AuthenticatedUserKey, userAuthDto);
             return;
 

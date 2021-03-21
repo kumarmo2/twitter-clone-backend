@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using DataAccess.Tweets;
 using Business.Tweets;
 using System;
+using CommonLibs.RateLimiter.Extensions;
+using CommonLibs.RedisCache;
+using TwitterWeb.MiddleWares;
 
 namespace TwitterWeb
 {
@@ -55,7 +58,10 @@ namespace TwitterWeb
             services.AddSingleton<IUserEventsPublisher, UserEventsPublisher>();
             services.AddSingleton<IEventsPublisher, EventsPublisher>();
             services.AddSingleton<ITweetRepository, TweetRepository>();
+            services.AddRedisCacheManager(Configuration);
             services.AddSingleton<ITweetsLogic, TweetsLogic>();
+            services.AddLocalRateLimitConfigProvider(Configuration);
+            services.AddRateLimiter(Configuration);
 
             services.AddSingleton<IIdentityFactory, IdentityFactory>();
             services.AddSingleton<Utils.Common.Authorization>();
@@ -82,15 +88,23 @@ namespace TwitterWeb
                 Console.WriteLine(">>>>>> Request Received<<<<<<<<");
                 await next.Invoke();
             });
+            app.UseMiddleware<RateLimiterMiddleWare>();
 
             app.UseRouting();
 
+            // app.Use(async (context, next) =>
+            // {
+            //     Console.WriteLine(" from middleware<<<<<<<<<<<<<<<<<<<");
+            //     await next.Invoke();
+            // });
+            // app.UseMiddleware<RateLimiterMiddleWare>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }
