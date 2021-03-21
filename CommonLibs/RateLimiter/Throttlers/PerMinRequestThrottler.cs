@@ -40,79 +40,81 @@ namespace CommonLibs.RateLimiter.Throttlers
             var currMinValue = values[1];
             if (currMinValue.IsNull)
             {
-                if (_nextThrottler == null)
-                {
-
-                    await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
-                    // increment counter for current min and current second(only if there is a rule for per seconds too)
-                    return false;
-                }
-                else
-                {
-
-                    // TODO: before incrementing, call should Throttole on nextRequestThrottler if exists
-                    // if there is no next throttler, increase the counter and return
-                    // if there is nextThrottler and it returns true for shouldThrottle, don't increment counter and return true.
-                }
-
+                return await HandleCaseWhenCurrMinValueIsNull(throttleRequest, userRateLimitConfigCacheKey, currMin);
             }
             currMinValue.TryParse(out int currMinIntegerValue);
-            if (currMinIntegerValue >= perMinLimit)
-            {
-                return true;
-            }
             var prevMinValue = values[0];
             if (prevMinValue.IsNull)
             {
-                // TODO: before incrementing, call should Throttole on nextRequestThrottler if exists
-                // if there is no next throttler, increase the counter and return
-                // if there is nextThrottler and it returns true for shouldThrottle, don't increment counter and return true.
-                if (_nextThrottler == null)
-                {
-
-                    await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
-                    // TODO: 
-                    // increment counter for current min and current second(only if there is a rule for per seconds too)
-                    return false;
-                }
-                else
-                {
-
-                    // TODO: before incrementing, call should Throttole on nextRequestThrottler if exists
-                    // if there is no next throttler, increase the counter and return
-                    // if there is nextThrottler and it returns true for shouldThrottle, don't increment counter and return true.
-                }
+                return await HandleCaseWhenPrevMinValueIsNull(throttleRequest, userRateLimitConfigCacheKey, currMin, currMinIntegerValue);
             }
             prevMinValue.TryParse(out int prevMinIntergerValue);
-            var currWindowStart = now.AddMinutes(-1);
+            return await HandleCaseWhenPrevAndCurrMinHasValue(throttleRequest, userRateLimitConfigCacheKey, now, currMin,
+                currMinIntegerValue, prevMinIntergerValue);
+        }
 
-            var x = currMin - prevMin;
-            var y = currMin - currWindowStart;
-
-            var calculatedvalue = (int)((y / x) * prevMinIntergerValue + currMinIntegerValue);
-            if (calculatedvalue >= perMinLimit)
+        private async Task<bool> HandleCaseWhenPrevAndCurrMinHasValue(ThrottleRequest throttleRequest, string userRateLimitConfigCacheKey, DateTime now, DateTime currMin,
+            int currMinIntegerValue, int prevMinIntergerValue)
+        {
+            if (currMinIntegerValue >= throttleRequest.AppliedConfig.PerMinLimit)
             {
                 return true;
             }
-            // if we reach this point that means this request has passed the  perMinLimit
-            // TODO: we should only increment the counter if there are no further rules to counter.
-            // TODO: before incrementing, call should Throttole on nextRequestThrottler if exists
-            // if there is no next throttler, increase the counter and return
-            // if there is nextThrottler and it returns true for shouldThrottle, don't increment counter and return true.
+            var currWindow = now - now.AddMinutes(-1);
+            var prevMinPartInCurrWindow = currMin - (now.AddMinutes(-1));
+            var prevMinFractionalPartInCurrWindow = prevMinPartInCurrWindow / currWindow;
+
+            var calculatedvalue = (int)(currMinIntegerValue + prevMinIntergerValue * prevMinFractionalPartInCurrWindow);
+            if (calculatedvalue >= throttleRequest.AppliedConfig.PerMinLimit)
+            {
+                return true;
+            }
+
             if (_nextThrottler == null)
             {
-
                 await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
                 return false;
             }
-            else
+            var shouldThrottle = await _nextThrottler.ShouldThrottle(throttleRequest);
+            if (!shouldThrottle)
             {
-
-                // TODO: before incrementing, call should Throttole on nextRequestThrottler if exists
-                // if there is no next throttler, increase the counter and return
-                // if there is nextThrottler and it returns true for shouldThrottle, don't increment counter and return true.
+                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
             }
-            return false;
+            return shouldThrottle;
+        }
+
+        private async Task<bool> HandleCaseWhenPrevMinValueIsNull(ThrottleRequest throttleRequest, string userRateLimitConfigCacheKey, DateTime currMin, int currMinValue)
+        {
+            if (currMinValue >= throttleRequest.AppliedConfig.PerMinLimit)
+            {
+                return true;
+            }
+            if (_nextThrottler == null)
+            {
+                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
+                return false;
+            }
+            var shouldThrottle = await _nextThrottler.ShouldThrottle(throttleRequest);
+            if (!shouldThrottle)
+            {
+                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMinValue.ToString());
+            }
+            return shouldThrottle;
+        }
+
+        private async Task<bool> HandleCaseWhenCurrMinValueIsNull(ThrottleRequest throttleRequest, string userRateLimitConfigCacheKey, DateTime currMin)
+        {
+            if (_nextThrottler == null)
+            {
+                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
+                return false;
+            }
+            var shouldThrottle = await _nextThrottler.ShouldThrottle(throttleRequest);
+            if (!shouldThrottle)
+            {
+                await _cacheManager.HashIncrementAsync(userRateLimitConfigCacheKey, currMin.ToString());
+            }
+            return shouldThrottle;
 
         }
     }

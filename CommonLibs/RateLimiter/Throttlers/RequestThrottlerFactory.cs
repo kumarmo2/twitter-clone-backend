@@ -1,3 +1,4 @@
+using System;
 using CommonLibs.RedisCache;
 
 namespace CommonLibs.RateLimiter.Throttlers
@@ -18,10 +19,8 @@ namespace CommonLibs.RateLimiter.Throttlers
             IRequestThrottler perSecThrottler = null;
             if (config.PerSecLimit > 0)
             {
-                // TODO:
-                /*
-                    To handle if PerSecLimit > 0
-                */
+                Console.WriteLine(">>>>>> initializing per sec throttler as well");
+                perSecThrottler = new PerSecRequestThrottler(null, _redisCacheManager);
             }
 
             if (config.PerMinLimit > 0)
