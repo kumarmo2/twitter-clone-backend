@@ -13,7 +13,11 @@ command cd ${FEPATH}
 
 echo ">>>>>>>>>>>>>>> Building Dev <<<<<<<<<<<<"
 echo
+
 #TODO: make this step optional with some flag
+# npm install 
+
+
 npm run build-dev
 
 
