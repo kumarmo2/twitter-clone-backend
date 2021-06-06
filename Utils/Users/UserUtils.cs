@@ -3,6 +3,7 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Dtos.Users;
 using Utils.Common;
+using JWT.Exceptions;
 
 namespace Utils.Users
 {
@@ -32,11 +33,19 @@ namespace Utils.Users
                 return false;
             }
 
-            userAuthDto = new JwtBuilder()
-              .WithAlgorithm(new HMACSHA256Algorithm())
-              .WithSecret(Constants.JwtSecret)
-              .MustVerifySignature()
-              .Decode<UserAuthDto>(authCookie);
+            try
+            {
+
+                userAuthDto = new JwtBuilder()
+                  .WithAlgorithm(new HMACSHA256Algorithm())
+                  .WithSecret(Constants.JwtSecret)
+                  .MustVerifySignature()
+                  .Decode<UserAuthDto>(authCookie);
+            }
+            catch (TokenExpiredException ex)
+            {
+                return false;
+            }
 
             if (userAuthDto == null || userAuthDto.UserId < 1)
             {

@@ -1,10 +1,5 @@
 ---------------- Schemas start-----------------------
 
-create schema if not exists users;
-create schema if not exists events;
-create schema if not exists notifications;
-create schema if not exists tweets;
-
 ---------------- Schemas ends---------------------
 
 
@@ -55,10 +50,13 @@ create table if not exists events.userqueues
 	constraint pk_userqueues_id primary key(id)
 ); 
 
+
+alter table events.userqueues drop constraint if exists fk_userqueues_users;
+
+alter table events.userqueues drop constraint if exists ix_userqueues_userid_queuename;
+
 alter table events.userqueues
-drop constraint fk_userqueues_users,
  add constraint fk_userqueues_users foreign key(userid) references users.users(id),
- drop constraint ix_userqueues_userid_queuename,
  add constraint ix_userqueues_userid_queuename unique(userid, queuename);
 
 
